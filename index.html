@@ -166,7 +166,11 @@
           <h2 class="section-title">Знайдіть свій наступний акаунт.</h2>
           <p class="section-desc">Фільтруйте, вибирайте та купуйте акаунт, який відповідає вашому бюджету.</p>
         </div>
+        <button class="btn btn-primary" type="button" onclick="openAccountForm()">
+          <i class="fa-solid fa-plus"></i> Додати акаунт
+        </button>
       </div>
+      <p class="catalog-message" id="catalogMessage" role="status" aria-live="polite"></p>
 
       <!-- Filters Bar -->
       <div class="filters-bar">
@@ -316,7 +320,7 @@
             <p class="cta-desc">Продайте свій акаунт Dota 2 швидко та безпечно за найкращою ціною на ринку.</p>
           </div>
         </div>
-        <a href="#" class="btn btn-outline">Стати продавцем <i class="fa-solid fa-arrow-right"></i></a>
+        <button class="btn btn-outline" type="button" onclick="openAccountForm()">Стати продавцем <i class="fa-solid fa-arrow-right"></i></button>
       </div>
     </div>
   </section>
@@ -448,6 +452,63 @@
     </div>
   </footer>
 
+  <dialog class="account-dialog" id="accountDialog" aria-labelledby="accountDialogTitle">
+    <div class="dialog-header">
+      <div>
+        <div class="section-tag">НОВЕ ОГОЛОШЕННЯ</div>
+        <h2 class="dialog-title" id="accountDialogTitle">Додати акаунт</h2>
+      </div>
+      <button class="dialog-close" type="button" aria-label="Закрити" onclick="closeAccountForm()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <p class="dialog-note">Заповніть характеристики для картки в каталозі. Не додавайте паролі чи інші дані для входу.</p>
+    <form class="account-form" id="accountForm">
+      <label class="account-form-field">
+        <span>Назва оголошення</span>
+        <input name="title" type="text" maxlength="60" placeholder="Наприклад: Безсмертний — 6 300 MMR" required>
+      </label>
+      <label class="account-form-field">
+        <span>Ранг</span>
+        <select name="rankKey" required>
+          <option value="herald">Рекрут</option>
+          <option value="guardian">Страж</option>
+          <option value="crusader">Рыцарь</option>
+          <option value="archon">Герой</option>
+          <option value="legend">Легенда</option>
+          <option value="ancient">Властелин</option>
+          <option value="divine">Божество</option>
+          <option value="immortal">Безсмертний</option>
+        </select>
+      </label>
+      <label class="account-form-field">
+        <span>MMR</span>
+        <input name="mmr" type="number" min="0" max="15000" step="1" placeholder="6300" required>
+      </label>
+      <label class="account-form-field">
+        <span>Кількість годин</span>
+        <input name="hours" type="number" min="0" step="1" placeholder="1200" required>
+      </label>
+      <label class="account-form-field">
+        <span>Порядочність</span>
+        <input name="behavior" type="number" min="0" max="12000" step="1" placeholder="10000" required>
+      </label>
+      <label class="account-form-field">
+        <span>Ціна, USD</span>
+        <input name="price" type="number" min="0.01" step="0.01" placeholder="99" required>
+      </label>
+      <label class="account-form-field account-form-image">
+        <span>Посилання на зображення (необов'язково)</span>
+        <input name="image" type="url" placeholder="https://example.com/image.jpg">
+      </label>
+      <p class="account-form-message" id="accountFormMessage" role="alert" aria-live="polite"></p>
+      <div class="dialog-actions">
+        <button class="btn btn-outline" type="button" onclick="closeAccountForm()">Скасувати</button>
+        <button class="btn btn-primary" type="submit">Додати в каталог</button>
+      </div>
+    </form>
+  </dialog>
+
   <!-- JAVASCRIPT -->
   <script>
     const accountsData = [
@@ -525,7 +586,122 @@
       }
     ];
 
+    const customAccountsStorageKey = 'akkbuydota2.customAccounts';
+    const rankBadges = {
+      herald: 'Herald',
+      guardian: 'Guardian',
+      crusader: 'Crusader',
+      archon: 'Archon',
+      legend: 'Legend',
+      ancient: 'Ancient',
+      divine: 'Divine',
+      immortal: 'Immortal'
+    };
+    const defaultAccountImage = 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800&q=80';
+    let customAccounts = [];
     let currentRankFilter = 'all';
+
+    function escapeHTML(value) {
+      return String(value).replace(/[&<>"']/g, character => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+      })[character]);
+    }
+
+    function showCatalogMessage(message, isError = false) {
+      const messageElement = document.getElementById('catalogMessage');
+      messageElement.textContent = message;
+      messageElement.classList.toggle('is-error', isError);
+    }
+
+    function loadCustomAccounts() {
+      try {
+        const savedAccounts = localStorage.getItem(customAccountsStorageKey);
+        if (!savedAccounts) return [];
+
+        const parsedAccounts = JSON.parse(savedAccounts);
+        if (!Array.isArray(parsedAccounts) || !parsedAccounts.every(account =>
+          account &&
+          Number.isInteger(account.id) &&
+          typeof account.title === 'string' &&
+          typeof account.rankKey === 'string' &&
+          Object.prototype.hasOwnProperty.call(rankBadges, account.rankKey) &&
+          Number.isFinite(account.mmr) &&
+          Number.isFinite(account.hours) &&
+          Number.isFinite(account.behavior) &&
+          Number.isFinite(account.price) &&
+          typeof account.image === 'string'
+        )) {
+          throw new Error('Збережені оголошення мають неправильний формат.');
+        }
+
+        return parsedAccounts;
+      } catch (error) {
+        showCatalogMessage(`Не вдалося завантажити збережені акаунти: ${error.message}`, true);
+        return [];
+      }
+    }
+
+    function openAccountForm() {
+      document.getElementById('accountFormMessage').textContent = '';
+      document.getElementById('accountDialog').showModal();
+    }
+
+    function closeAccountForm() {
+      document.getElementById('accountDialog').close();
+    }
+
+    function addAccount(event) {
+      event.preventDefault();
+      const form = event.currentTarget;
+      if (!form.reportValidity()) return;
+
+      const formData = new FormData(form);
+      const rankKey = formData.get('rankKey');
+      const imageInput = String(formData.get('image')).trim();
+      const account = {
+        id: Math.max(0, ...accountsData.map(item => item.id)) + 1,
+        title: String(formData.get('title')).trim(),
+        rankKey,
+        badge: rankBadges[rankKey],
+        mmr: Number(formData.get('mmr')),
+        hours: Number(formData.get('hours')),
+        behavior: Number(formData.get('behavior')),
+        price: Number(formData.get('price')),
+        image: imageInput || defaultAccountImage,
+        tag: 'Нове'
+      };
+
+      if (!account.title || !Object.prototype.hasOwnProperty.call(rankBadges, rankKey)) {
+        document.getElementById('accountFormMessage').textContent = 'Перевірте назву та обраний ранг.';
+        return;
+      }
+
+      try {
+        const parsedImage = new URL(account.image);
+        if (parsedImage.protocol !== 'https:' && parsedImage.protocol !== 'http:') {
+          throw new Error('Дозволені лише посилання http або https.');
+        }
+        account.image = parsedImage.href;
+
+        const nextCustomAccounts = [...customAccounts, account];
+        localStorage.setItem(customAccountsStorageKey, JSON.stringify(nextCustomAccounts));
+        customAccounts = nextCustomAccounts;
+        accountsData.push(account);
+      } catch (error) {
+        document.getElementById('accountFormMessage').textContent = `Не вдалося зберегти акаунт: ${error.message}`;
+        return;
+      }
+
+      form.reset();
+      closeAccountForm();
+      showCatalogMessage('Акаунт додано до каталогу та збережено у цьому браузері.');
+      filterAccounts();
+      document.getElementById('catalog').scrollIntoView({ behavior: 'smooth' });
+    }
 
     function renderAccounts(data) {
       const container = document.getElementById('accountsContainer');
@@ -541,15 +717,15 @@
         card.className = 'account-card';
         card.innerHTML = `
           <div class="card-img-wrap">
-            <img src="${acc.image}" alt="${acc.title}">
+            <img src="${escapeHTML(acc.image)}" alt="${escapeHTML(acc.title)}">
             <div class="card-overlay"></div>
-            <span class="card-tag">${acc.tag}</span>
+            <span class="card-tag">${escapeHTML(acc.tag)}</span>
             <button class="card-fav" title="Додати в обране"><i class="fa-regular fa-bookmark"></i></button>
           </div>
           <div class="card-body">
-            <div class="card-badge">${acc.badge}</div>
+            <div class="card-badge">${escapeHTML(acc.badge)}</div>
             <div class="card-title-row">
-              <h3 class="card-title">${acc.title}</h3>
+              <h3 class="card-title">${escapeHTML(acc.title)}</h3>
               <span class="card-verified"><i class="fa-solid fa-circle-check"></i> Перевірено</span>
             </div>
             
@@ -569,7 +745,7 @@
             </div>
 
             <div class="card-footer">
-              <div class="card-price">$${acc.price} <span>/ USD</span></div>
+              <div class="card-price">$${escapeHTML(acc.price)} <span>/ USD</span></div>
               <button class="btn btn-primary" onclick="buyAccount(${acc.id})">Переглянути акаунт <i class="fa-solid fa-arrow-right"></i></button>
             </div>
           </div>
@@ -670,6 +846,9 @@
 
     // Initialize
     document.addEventListener('DOMContentLoaded', () => {
+      customAccounts = loadCustomAccounts();
+      accountsData.push(...customAccounts);
+      document.getElementById('accountForm').addEventListener('submit', addAccount);
       renderAccounts(accountsData);
     });
   </script>
