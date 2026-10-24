@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>akkbuydota2 — Продаж акаунтів Dota 2</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-container">
+      <a href="#" class="logo">
+        <div class="logo-icon"><i class="fa-solid fa-shield-halved"></i></div>
+        <span>akkbuydota2</span>
+      </a>
+      <nav class="nav">
+        <a href="#catalog">Усі акаунти</a>
+        <a href="#steps">Як це працює</a>
+        <a href="#faq">Відповіді на питання</a>
+      </nav>
+      <div class="header-actions">
+        <a href="#" class="btn-text">Увійти</a>
+        <a href="#catalog" class="btn btn-primary">Знайти акаунт</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO SECTION -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-container">
+      <div class="hero-content">
+        <div class="section-tag">ОТРИМАЙ ПЕРЕВАГУ</div>
+        <h1 class="hero-title">Наступний розділ. <br><span class="accent-text">Інший ранг.</span></h1>
+        <p class="hero-desc">
+          Знайдіть акаунт Dota 2, який підходить саме вам. Перемагайте, міняйте розклад та грайте на своїх умовах з гарантією безпеки.
+        </p>
+        <div class="hero-btns">
+          <a href="#catalog" class="btn btn-primary btn-lg">Купити акаунт зараз <i class="fa-solid fa-arrow-right"></i></a>
+          <a href="#steps" class="btn btn-outline btn-lg">Як це працює <i class="fa-solid fa-chevron-right"></i></a>
+        </div>
+        <div class="hero-badges">
+          <span><i class="fa-solid fa-check"></i> Автоматична доставка</span>
+          <span><i class="fa-solid fa-shield-cat"></i> Гарантія 100%</span>
+          <span><i class="fa-solid fa-headset"></i> Поддержка 24/7</span>
+        </div>
+      </div>
+
+      <!-- Quick Search Widget -->
+      <div class="quick-widget">
+        <div class="widget-header">
+          <i class="fa-solid fa-sliders"></i> Швидкий підбір
+        </div>
+        <div class="widget-body">
+          <div class="form-group">
+            <label>Пошук за назвою або MMR</label>
+            <div class="input-icon">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" id="quickSearch" placeholder="Наприклад: 6000 MMR, Immortal...">
+            </div>
+          </div>
+          <div class="widget-pills">
+            <span class="pill-tag" onclick="filterByMMR(0, 3000)">0-3k</span>
+            <span class="pill-tag" onclick="filterByMMR(3000, 5000)">3k-5k MMR</span>
+            <span class="pill-tag" onclick="filterByMMR(5000, 7000)">5k-7k</span>
+            <span class="pill-tag" onclick="filterByMMR(7000, 15000)">7k+ MMR</span>
+          </div>
+          <button class="btn btn-primary btn-full" onclick="applyQuickSearch()">Пошук</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES BAR -->
+  <section class="features-bar">
+    <div class="container features-grid">
+      <div class="feature-item">
+        <i class="fa-solid fa-bolt feature-icon"></i>
+        <div>
+          <h4>Миттєвий доступ</h4>
+          <p>Дані від акаунту приходять одразу після оплати</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <i class="fa-solid fa-lock feature-icon"></i>
+        <div>
+          <h4>Безпека та конфіденційність</h4>
+          <p>Повна зміна пошти та захист від повернення</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <i class="fa-solid fa-certificate feature-icon"></i>
+        <div>
+          <h4>Якість, яка акцептується</h4>
+          <p>Перевірені акаунти з високою порядочністю</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <i class="fa-solid fa-headset feature-icon"></i>
+        <div>
+          <h4>Цілодобова підтримка</h4>
+          <p>Допоможемо з будь-яким питанням 24/7</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RANKS TABS FILTER -->
+  <section class="ranks-section">
+    <div class="container">
+      <div class="ranks-header">
+        <div class="section-tag">ОБЕРІТЬ СВІЙ РАНГ</div>
+        <div class="ranks-sub">Оберіть бажаний ранг для швидкого фільтру товару</div>
+      </div>
+      <div class="ranks-grid" id="ranksGrid">
+        <div class="rank-card active" onclick="selectRank('all', this)">
+          <i class="fa-solid fa-border-all rank-icon"></i>
+          <span>Усі ранги</span>
+        </div>
+        <div class="rank-card" onclick="selectRank('herald', this)">
+          <i class="fa-solid fa-shield-halved rank-icon"></i>
+          <span>Рекрут</span>
+        </div>
+        <div class="rank-card" onclick="selectRank('guardian', this)">
+          <i class="fa-solid fa-shield-halved rank-icon"></i>
+          <span>Страж</span>
+        </div>
+        <div class="rank-card" onclick="selectRank('crusader', this)">
+          <i class="fa-solid fa-crosshairs rank-icon"></i>
+          <span>Рыцарь</span>
+        </div>
+        <div class="rank-card" onclick="selectRank('archon', this)">
+          <i class="fa-solid fa-gem rank-icon"></i>
+          <span>Герой</span>
+        </div>
+        <div class="rank-card" onclick="selectRank('legend', this)">
+          <i class="fa-solid fa-crown rank-icon"></i>
+          <span>Легенда</span>
+        </div>
+        <div class="rank-card" onclick="selectRank('ancient', this)">
+          <i class="fa-solid fa-dragon rank-icon"></i>
+          <span>Властелин</span>
+        </div>
+        <div class="rank-card" onclick="selectRank('divine', this)">
+          <i class="fa-solid fa-wand-magic-sparkles rank-icon"></i>
+          <span>Божество</span>
+        </div>
+        <div class="rank-card" onclick="selectRank('immortal', this)">
+          <i class="fa-solid fa-fire rank-icon"></i>
+          <span>Безсмертний</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CATALOG SECTION -->
+  <section class="catalog-section" id="catalog">
+    <div class="container">
+      <div class="catalog-header">
+        <div>
+          <div class="section-tag">КАТАЛОГ</div>
+          <h2 class="section-title">Знайдіть свій наступний акаунт.</h2>
+          <p class="section-desc">Фільтруйте, вибирайте та купуйте акаунт, який відповідає вашому бюджету.</p>
+        </div>
+      </div>
+
+      <!-- Filters Bar -->
+      <div class="filters-bar">
+        <div class="filter-input-wrap">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" id="catalogSearch" placeholder="Пошук за назвою або ID..." oninput="filterAccounts()">
+        </div>
+        <div class="filter-select-wrap">
+          <select id="mmrFilter" onchange="filterAccounts()">
+            <option value="all">Будь-який MMR</option>
+            <option value="0-2000">0 - 2000 MMR</option>
+            <option value="2000-4000">2000 - 4000 MMR</option>
+            <option value="4000-6000">4000 - 6000 MMR</option>
+            <option value="6000+">6000+ MMR</option>
+          </select>
+        </div>
+        <div class="filter-select-wrap">
+          <select id="behaviorFilter" onchange="filterAccounts()">
+            <option value="all">Вся порядочність</option>
+            <option value="10000">10,000+ Порядочність</option>
+            <option value="8000">8,000+ Порядочність</option>
+          </select>
+        </div>
+        <div class="filter-select-wrap">
+          <select id="sortFilter" onchange="filterAccounts()">
+            <option value="default">Сортування: За умовчанням</option>
+            <option value="price-asc">Ціна: від найдешевшої</option>
+            <option value="price-desc">Ціна: від найдорожчої</option>
+            <option value="mmr-desc">MMR: за спаданням</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" onclick="resetFilters()">Скинути фільтри</button>
+      </div>
+
+      <!-- Accounts Grid -->
+      <div class="accounts-grid" id="accountsContainer">
+        <!-- JS dynamic cards insertion -->
+      </div>
+
+      <div class="load-more-wrap">
+        <button class="btn btn-outline btn-lg" id="loadMoreBtn" onclick="loadMore()">Переглянути ще акаунти <i class="fa-solid fa-plus"></i></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS (4 STEPS) -->
+  <section class="steps-section" id="steps">
+    <div class="container">
+      <div class="section-tag">ЯК КУПИТИ АКАУНТ</div>
+      <h2 class="section-title">Чотири кроки. Без здогадок.</h2>
+
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+          <div class="step-num">01</div>
+          <h3 class="step-title">Знайдіть свій акаунт</h3>
+          <p class="step-desc">Використовуйте фільтри за MMR, порядочністю та ціною. Оберіть ідеальний варіант із сотень доступних акаунтів у каталозі.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-icon"><i class="fa-solid fa-file-lines"></i></div>
+          <div class="step-num">02</div>
+          <h3 class="step-title">Перевірте деталі</h3>
+          <p class="step-desc">Ознайомтесь із детальною інформацією: проіграний час, кількість годин, наявність першої пошти та рідних даних.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-icon"><i class="fa-solid fa-credit-card"></i></div>
+          <div class="step-num">03</div>
+          <h3 class="step-title">Оформіть замовлення</h3>
+          <p class="step-desc">Оплатіть зручним для вас способом через захищену платіжну систему прямо на платформі.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-icon"><i class="fa-solid fa-key"></i></div>
+          <div class="step-num">04</div>
+          <h3 class="step-title">Переберіть передачу</h3>
+          <p class="step-desc">Отримайте логін і пароль від акаунту та пошти миттєво. Прив'яжіть свої дані та грайте без побоювань.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DETAILED INFO BANNER -->
+  <section class="info-banner-section">
+    <div class="container">
+      <div class="info-banner-box">
+        <div class="info-banner-grid">
+          <!-- Left Col -->
+          <div class="info-left">
+            <div class="section-tag">ПОДРОБИЦІ ТА ГАРАНТІЇ</div>
+            <h2 class="info-heading">Гарні рішення починаються з деталей.</h2>
+            <p class="info-subtext">
+              Dota 2 — це гра командних дій. Використовуйте свій потенціал проти рівних, а не витрачайте час.
+            </p>
+            <a href="#catalog" class="btn btn-primary">Відкрити каталог покупця <i class="fa-solid fa-arrow-right"></i></a>
+            <div class="info-note">
+              <i class="fa-solid fa-shield"></i>
+              <span>Кожна угода захищена програмою підтримки покупця. Гарантія повернення даних.</span>
+            </div>
+          </div>
+
+          <!-- Right Col -->
+          <div class="info-right">
+            <div class="checklist">
+              <div class="check-item">
+                <i class="fa-solid fa-check check-icon"></i>
+                <div>
+                  <h4 class="check-title">Перевірте історію акаунту</h4>
+                  <p class="check-desc">Гляньте кількість матчей, час та порядочність.</p>
+                </div>
+              </div>
+              <div class="check-item">
+                <i class="fa-solid fa-check check-icon"></i>
+                <div>
+                  <h4 class="check-title">Перевірте календар та активність</h4>
+                  <p class="check-desc">Оцініть частоту ігор та відсутність підозрілої активності.</p>
+                </div>
+              </div>
+              <div class="check-item">
+                <i class="fa-solid fa-check check-icon"></i>
+                <div>
+                  <h4 class="check-title">Збережіть умови</h4>
+                  <p class="check-desc">Роздрукуйте або збережіть дані про покупку у своєму кабінеті.</p>
+                </div>
+              </div>
+              <div class="check-item">
+                <i class="fa-solid fa-check check-icon"></i>
+                <div>
+                  <h4 class="check-title">Збережіть затишок</h4>
+                  <p class="check-desc">Дотримуйтесь порад з безпеки та одразу перев'яжіть усі захистні компоненти.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA SELL BANNER -->
+  <section class="cta-banner-section">
+    <div class="container">
+      <div class="cta-box">
+        <div class="cta-content">
+          <div class="cta-icon-wrap"><i class="fa-solid fa-wallet"></i></div>
+          <div>
+            <div class="section-tag">ДЛЯ ПРОДАВЦІВ</div>
+            <h3 class="cta-title">Готові передати естафету?</h3>
+            <p class="cta-desc">Продайте свій акаунт Dota 2 швидко та безпечно за найкращою ціною на ринку.</p>
+          </div>
+        </div>
+        <a href="#" class="btn btn-outline">Стати продавцем <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ SECTION -->
+  <section class="faq-section" id="faq">
+    <div class="container">
+      <div class="faq-grid">
+        <div class="faq-sidebar">
+          <div class="section-tag">ЧАСТІ ПИТАННЯ</div>
+          <h2 class="section-title">Перед тим, як зробити свій крок.</h2>
+          <p class="faq-sidebar-desc">
+            Важливі деталі та відповіді. Знайдіть усе необхідне перед купівлею.
+          </p>
+          <a href="#" class="btn btn-outline"><i class="fa-solid fa-headset"></i> Написати в підтримку</a>
+        </div>
+
+        <div class="faq-accordion">
+          <div class="faq-item active">
+            <div class="faq-header" onclick="toggleFaq(this)">
+              <span>Як правильно перевірити перед покупкою акаунт?</span>
+              <i class="fa-solid fa-chevron-down faq-arrow"></i>
+            </div>
+            <div class="faq-body">
+              Рекомендуємо уважно ознайомитися з описом: перевірте MMR, порядочність, наявність першої пошти та супутніх ігор. Всі акаунти в нашому каталозі проходять автоматичну перевірку на працездатність та відсутність блокувань.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-header" onclick="toggleFaq(this)">
+              <span>Яка ймовірність забану купленого акаунту?</span>
+              <i class="fa-solid fa-chevron-down faq-arrow"></i>
+            </div>
+            <div class="faq-body">
+              Ми продаємо лише чисті акаунти, прокачані вручну або без використання сторонніх програм. При дотриманні правил безпеки ймовірність отримання бану мінімальна.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-header" onclick="toggleFaq(this)">
+              <span>Чи отримую я доступ до рідної пошти?</span>
+              <i class="fa-solid fa-chevron-down faq-arrow"></i>
+            </div>
+            <div class="faq-body">
+              Так, більшість акаунтів (позначені спеціальним значком "Рідна пошта") передаються разом із першою створеною поштою та листом-підтвердженням.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-header" onclick="toggleFaq(this)">
+              <span>Що робити, якщо виникли проблеми з акаунтом?</span>
+              <i class="fa-solid fa-chevron-down faq-arrow"></i>
+            </div>
+            <div class="faq-body">
+              Наша служба підтримки працює 24/7. У разі невідповідності опису або виникнення складнощів із входом ми миттєво замінимо акаунт або повернемо кошти.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-header" onclick="toggleFaq(this)">
+              <span>Куплений акаунт буде 5v5 чи Turbo?</span>
+              <i class="fa-solid fa-chevron-down faq-arrow"></i>
+            </div>
+            <div class="faq-body">
+              Усі деталі по зіграним матчам вказані в картці кожного акаунту. Ви можете заздалегідь перевірити рейтинг, режим рейтингів та кількість ігор.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <a href="#" class="logo">
+            <div class="logo-icon"><i class="fa-solid fa-shield-halved"></i></div>
+            <span>akkbuydota2</span>
+          </a>
+          <p class="footer-desc">
+            Маркетплейс перевірених акаунтів Dota 2. Найкращі ціни, гарантія безпеки та миттєва доставка.
+          </p>
+          <div class="social-links">
+            <a href="#"><i class="fa-brands fa-telegram"></i></a>
+            <a href="#"><i class="fa-brands fa-discord"></i></a>
+            <a href="#"><i class="fa-brands fa-youtube"></i></a>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h4>Навігація</h4>
+          <ul>
+            <li><a href="#catalog">Усі акаунти</a></li>
+            <li><a href="#catalog">Безсмертний / Immortal</a></li>
+            <li><a href="#catalog">Акаунти з 10k MMR</a></li>
+            <li><a href="#steps">Процес купівлі</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Клієнтам</h4>
+          <ul>
+            <li><a href="#faq">Часті питання</a></li>
+            <li><a href="#steps">Як це працює</a></li>
+            <li><a href="#">Центр підтримки</a></li>
+            <li><a href="#">Гарантія та повернення</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Документи</h4>
+          <ul>
+            <li><a href="#">Угода користувача</a></li>
+            <li><a href="#">Політика конфіденційності</a></li>
+            <li><a href="#">Правила продажу</a></li>
+            <li><a href="#">Публічна оферта</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>© 2026 akkbuydota2. Всі права захищені.</div>
+        <div class="disclaimer">
+          Dota 2 є зареєстрованою торговою маркою Valve Corporation. Цей сайт не пов'язаний з Valve Corporation.
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JAVASCRIPT -->
+  <script>
+    const accountsData = [
+      {
+        id: 1,
+        title: "Безсмертний",
+        rankKey: "immortal",
+        badge: "Immortal",
+        mmr: 6630,
+        hours: 10214,
+        behavior: 12000,
+        price: 329,
+        image: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800&q=80",
+        tag: "Топ ціна"
+      },
+      {
+        id: 2,
+        title: "Божественний V",
+        rankKey: "divine",
+        badge: "Divine V",
+        mmr: 5410,
+        hours: 5411,
+        behavior: 12000,
+        price: 219,
+        image: "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=800&q=80",
+        tag: "Популярний"
+      },
+      {
+        id: 3,
+        title: "Дивний IV",
+        rankKey: "ancient",
+        badge: "Ancient IV",
+        mmr: 4300,
+        hours: 1814,
+        behavior: 11200,
+        price: 139,
+        image: "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=800&q=80",
+        tag: "Швидка доставка"
+      },
+      {
+        id: 4,
+        title: "Легенда III",
+        rankKey: "legend",
+        badge: "Legend III",
+        mmr: 3340,
+        hours: 650,
+        behavior: 9620,
+        price: 89,
+        image: "https://images.unsplash.com/photo-1560253023-3ec5d502959f?auto=format&fit=crop&w=800&q=80",
+        tag: "Топ ціна"
+      },
+      {
+        id: 5,
+        title: "Архонт V",
+        rankKey: "archon",
+        badge: "Archon V",
+        mmr: 2810,
+        hours: 1270,
+        behavior: 9110,
+        price: 69,
+        image: "https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?auto=format&fit=crop&w=800&q=80",
+        tag: "Швидка доставка"
+      },
+      {
+        id: 6,
+        title: "Хрестоносець IV",
+        rankKey: "crusader",
+        badge: "Crusader IV",
+        mmr: 2170,
+        hours: 830,
+        behavior: 7100,
+        price: 45,
+        image: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=800&q=80",
+        tag: "Бюджетний"
+      }
+    ];
+
+    let currentRankFilter = 'all';
+
+    function renderAccounts(data) {
+      const container = document.getElementById('accountsContainer');
+      container.innerHTML = '';
+
+      if (data.length === 0) {
+        container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #888;">За вашим запитом акаунтів не знайдено.</div>`;
+        return;
+      }
+
+      data.forEach(acc => {
+        const card = document.createElement('div');
+        card.className = 'account-card';
+        card.innerHTML = `
+          <div class="card-img-wrap">
+            <img src="${acc.image}" alt="${acc.title}">
+            <div class="card-overlay"></div>
+            <span class="card-tag">${acc.tag}</span>
+            <button class="card-fav" title="Додати в обране"><i class="fa-regular fa-bookmark"></i></button>
+          </div>
+          <div class="card-body">
+            <div class="card-badge">${acc.badge}</div>
+            <div class="card-title-row">
+              <h3 class="card-title">${acc.title}</h3>
+              <span class="card-verified"><i class="fa-solid fa-circle-check"></i> Перевірено</span>
+            </div>
+            
+            <div class="card-stats">
+              <div class="stat-box">
+                <span class="stat-label">MMR</span>
+                <span class="stat-value">${acc.mmr}</span>
+              </div>
+              <div class="stat-box">
+                <span class="stat-label">ГОДИН</span>
+                <span class="stat-value">${acc.hours}</span>
+              </div>
+              <div class="stat-box">
+                <span class="stat-label">ПОРЯДОЧНІСТЬ</span>
+                <span class="stat-value">${acc.behavior}</span>
+              </div>
+            </div>
+
+            <div class="card-footer">
+              <div class="card-price">$${acc.price} <span>/ USD</span></div>
+              <button class="btn btn-primary" onclick="buyAccount(${acc.id})">Переглянути акаунт <i class="fa-solid fa-arrow-right"></i></button>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function selectRank(rankKey, el) {
+      currentRankFilter = rankKey;
+      document.querySelectorAll('.rank-card').forEach(c => c.classList.remove('active'));
+      el.classList.add('active');
+      filterAccounts();
+    }
+
+    function filterAccounts() {
+      const searchVal = document.getElementById('catalogSearch').value.toLowerCase();
+      const mmrVal = document.getElementById('mmrFilter').value;
+      const behaviorVal = document.getElementById('behaviorFilter').value;
+      const sortVal = document.getElementById('sortFilter').value;
+
+      let filtered = accountsData.filter(acc => {
+        // Rank tab filter
+        if (currentRankFilter !== 'all' && acc.rankKey !== currentRankFilter) {
+          return false;
+        }
+
+        // Search text
+        if (searchVal && !acc.title.toLowerCase().includes(searchVal) && !acc.badge.toLowerCase().includes(searchVal) && !acc.mmr.toString().includes(searchVal)) {
+          return false;
+        }
+
+        // MMR range
+        if (mmrVal === '0-2000' && (acc.mmr > 2000)) return false;
+        if (mmrVal === '2000-4000' && (acc.mmr < 2000 || acc.mmr > 4000)) return false;
+        if (mmrVal === '4000-6000' && (acc.mmr < 4000 || acc.mmr > 6000)) return false;
+        if (mmrVal === '6000+' && (acc.mmr < 6000)) return false;
+
+        // Behavior score
+        if (behaviorVal !== 'all') {
+          const reqScore = parseInt(behaviorVal);
+          if (acc.behavior < reqScore) return false;
+        }
+
+        return true;
+      });
+
+      // Sorting
+      if (sortVal === 'price-asc') {
+        filtered.sort((a, b) => a.price - b.price);
+      } else if (sortVal === 'price-desc') {
+        filtered.sort((a, b) => b.price - a.price);
+      } else if (sortVal === 'mmr-desc') {
+        filtered.sort((a, b) => b.mmr - a.mmr);
+      }
+
+      renderAccounts(filtered);
+    }
+
+    function resetFilters() {
+      document.getElementById('catalogSearch').value = '';
+      document.getElementById('mmrFilter').value = 'all';
+      document.getElementById('behaviorFilter').value = 'all';
+      document.getElementById('sortFilter').value = 'default';
+      currentRankFilter = 'all';
+      
+      document.querySelectorAll('.rank-card').forEach(c => c.classList.remove('active'));
+      document.querySelectorAll('.rank-card')[0].classList.add('active');
+
+      renderAccounts(accountsData);
+    }
+
+    function filterByMMR(min, max) {
+      document.getElementById('mmrFilter').value = min === 6000 ? '6000+' : `${min}-${max}`;
+      document.getElementById('catalog').scrollIntoView({ behavior: 'smooth' });
+      filterAccounts();
+    }
+
+    function applyQuickSearch() {
+      const val = document.getElementById('quickSearch').value;
+      document.getElementById('catalogSearch').value = val;
+      document.getElementById('catalog').scrollIntoView({ behavior: 'smooth' });
+      filterAccounts();
+    }
+
+    function toggleFaq(element) {
+      const item = element.parentElement;
+      item.classList.toggle('active');
+    }
+
+    function buyAccount(id) {
+      alert(`Ви обрали акаунт #${id}. Перехід до оформлення замовлення...`);
+    }
+
+    function loadMore() {
+      alert("Всі доступні акаунти вже відображені у списку!");
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      renderAccounts(accountsData);
+    });
+  </script>
+</body>
+</html>
