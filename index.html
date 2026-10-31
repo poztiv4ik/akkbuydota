@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>akkbuydota2 — Продаж акаунтів Dota 2</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="ctyle.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -22,7 +22,15 @@
         <a href="#faq">Відповіді на питання</a>
       </nav>
       <div class="header-actions">
-        <a href="#" class="btn-text">Увійти</a>
+        <button class="cart-trigger" type="button" onclick="openCart()" aria-label="Відкрити кошик">
+          <i class="fa-solid fa-cart-shopping" aria-hidden="true"></i>
+          <span>Кошик</span>
+          <span class="cart-count" id="cartCount" aria-live="polite">0</span>
+        </button>
+        <button class="btn-text auth-trigger" id="authHeaderButton" type="button" onclick="openAuth()" aria-label="Увійти або відкрити профіль">
+          <i class="fa-regular fa-user" aria-hidden="true"></i>
+          <span id="authHeaderLabel">Увійти</span>
+        </button>
         <a href="#catalog" class="btn btn-primary">Знайти акаунт</a>
       </div>
     </div>
@@ -452,6 +460,119 @@
     </div>
   </footer>
 
+  <dialog class="cart-dialog" id="cartDialog" aria-labelledby="cartDialogTitle">
+    <div class="dialog-header">
+      <div>
+        <div class="section-tag">ВАШЕ ЗАМОВЛЕННЯ</div>
+        <h2 class="dialog-title" id="cartDialogTitle">Кошик</h2>
+      </div>
+      <button class="dialog-close" type="button" aria-label="Закрити кошик" onclick="closeCart()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="cart-items" id="cartItems"></div>
+    <div class="cart-summary">
+      <span>Разом</span>
+      <strong id="cartTotal">$0.00</strong>
+    </div>
+    <p class="cart-notice">Оплата на сайті поки не підключена. Склад кошика збережеться в цьому браузері.</p>
+    <div class="dialog-actions">
+      <button class="btn btn-outline" type="button" onclick="closeCart()">Продовжити покупки</button>
+      <button class="btn btn-primary" type="button" id="checkoutButton" onclick="startCheckout()">Оформити замовлення</button>
+    </div>
+  </dialog>
+
+  <dialog class="checkout-dialog" id="checkoutDialog" aria-labelledby="checkoutDialogTitle">
+    <div class="dialog-header">
+      <div>
+        <div class="section-tag">ЗАМОВЛЕННЯ</div>
+        <h2 class="dialog-title" id="checkoutDialogTitle">Оплата та чат</h2>
+      </div>
+      <button class="dialog-close" type="button" aria-label="Закрити оформлення" onclick="closeCheckout()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="checkout-grid">
+      <section class="checkout-payment" aria-labelledby="checkoutPaymentTitle">
+        <h3 id="checkoutPaymentTitle">Оплата карткою</h3>
+        <div class="checkout-order-items" id="checkoutItems"></div>
+        <div class="cart-summary">
+          <span>До сплати</span>
+          <strong id="checkoutTotal">$0.00</strong>
+        </div>
+        <div class="payment-security">
+          <i class="fa-solid fa-lock" aria-hidden="true"></i>
+          <p>Дані картки вводяться лише на захищеній сторінці платіжного сервісу. Сайт не зберігає номер картки чи CVV.</p>
+        </div>
+        <button class="btn btn-primary btn-full" type="button" onclick="startCardPayment()">
+          Перейти до оплати карткою <i class="fa-solid fa-arrow-right"></i>
+        </button>
+        <p class="checkout-message" id="checkoutMessage" role="status" aria-live="polite"></p>
+      </section>
+      <section class="order-chat" aria-labelledby="orderChatTitle">
+        <div class="order-chat-header">
+          <h3 id="orderChatTitle">Чат замовлення</h3>
+          <span class="order-status"><i class="fa-solid fa-lock" aria-hidden="true"></i> Очікує оплату</span>
+        </div>
+        <div class="chat-messages" id="orderChatMessages" role="log" aria-live="polite">
+          <p class="chat-system-message">Після підтвердження платежу тут з'явиться повідомлення продавця. Дані акаунта має передавати сервер лише власнику оплаченого замовлення.</p>
+        </div>
+        <form class="chat-compose" onsubmit="sendOrderMessage(event)">
+          <input type="text" id="orderChatInput" placeholder="Чат стане доступний після оплати" aria-label="Повідомлення продавцю" disabled>
+          <button class="btn btn-primary" type="submit" aria-label="Надіслати повідомлення" disabled>
+            <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
+          </button>
+        </form>
+      </section>
+    </div>
+  </dialog>
+
+  <dialog class="auth-dialog" id="authDialog" aria-labelledby="authDialogTitle">
+    <div class="dialog-header">
+      <div>
+        <div class="section-tag">ОСОБИСТИЙ КАБІНЕТ</div>
+        <h2 class="dialog-title" id="authDialogTitle">Увійти або створити акаунт</h2>
+      </div>
+      <button class="dialog-close" type="button" aria-label="Закрити" onclick="closeAuth()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="auth-tabs" id="authTabs" role="tablist" aria-label="Вхід або реєстрація">
+      <button class="auth-tab active" id="loginTab" type="button" role="tab" aria-selected="true" onclick="setAuthMode('login')">Увійти</button>
+      <button class="auth-tab" id="registerTab" type="button" role="tab" aria-selected="false" onclick="setAuthMode('register')">Створити акаунт</button>
+    </div>
+    <form class="auth-form" id="authForm" onsubmit="submitAuth(event)">
+      <label class="account-form-field">
+        <span>Електронна пошта</span>
+        <input id="authEmail" name="email" type="email" maxlength="254" autocomplete="email" required>
+      </label>
+      <label class="account-form-field">
+        <span>Пароль</span>
+        <input id="authPassword" name="password" type="password" minlength="8" maxlength="128" autocomplete="current-password" required>
+      </label>
+      <label class="account-form-field" id="confirmPasswordField" hidden>
+        <span>Повторіть пароль</span>
+        <input id="authPasswordConfirm" name="passwordConfirm" type="password" minlength="8" maxlength="128" autocomplete="new-password">
+      </label>
+      <p class="auth-message" id="authMessage" role="alert" aria-live="polite"></p>
+      <button class="btn btn-primary btn-full" id="authSubmitButton" type="submit">Увійти</button>
+    </form>
+    <section class="auth-profile" id="authProfile" hidden>
+      <p class="auth-profile-label">Ви увійшли як</p>
+      <strong id="authProfileEmail"></strong>
+      <button class="btn btn-outline btn-full" type="button" onclick="logout()">Вийти з акаунта</button>
+    </section>
+    <p class="auth-notice">Демо-профіль зберігається лише в цьому браузері. Для повноцінних акаунтів із синхронізацією потрібен сервер авторизації.</p>
+  </dialog>
+
+  <aside class="cookie-banner" id="cookieBanner" aria-label="Повідомлення про файли cookie" hidden>
+    <div class="cookie-copy">
+      <strong>Файли cookie</strong>
+      <p>Використовуємо cookie лише для збереження вашої згоди. Аналітичні cookie не встановлюються.</p>
+    </div>
+    <button class="btn btn-primary" type="button" onclick="acceptCookies()">Зрозуміло</button>
+  </aside>
+
   <dialog class="account-dialog" id="accountDialog" aria-labelledby="accountDialogTitle">
     <div class="dialog-header">
       <div>
@@ -587,6 +708,10 @@
     ];
 
     const customAccountsStorageKey = 'akkbuydota2.customAccounts';
+    const cartStorageKey = 'akkbuydota2.cart';
+    const cookieConsentKey = 'akkbuydota2_cookie_consent';
+    const localUsersStorageKey = 'akkbuydota2.localUsers';
+    const authSessionStorageKey = 'akkbuydota2.authSession';
     const rankBadges = {
       herald: 'Herald',
       guardian: 'Guardian',
@@ -599,7 +724,10 @@
     };
     const defaultAccountImage = 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800&q=80';
     let customAccounts = [];
+    let cartAccountIds = [];
     let currentRankFilter = 'all';
+    let currentUser = '';
+    let currentAuthMode = 'login';
 
     function escapeHTML(value) {
       return String(value).replace(/[&<>"']/g, character => ({
@@ -720,7 +848,7 @@
             <img src="${escapeHTML(acc.image)}" alt="${escapeHTML(acc.title)}">
             <div class="card-overlay"></div>
             <span class="card-tag">${escapeHTML(acc.tag)}</span>
-            <button class="card-fav" title="Додати в обране"><i class="fa-regular fa-bookmark"></i></button>
+            <button class="card-fav" type="button" data-account-id="${acc.id}" aria-label="Додати в обране" aria-pressed="false" title="Додати в обране"><i class="fa-regular fa-bookmark" aria-hidden="true"></i></button>
           </div>
           <div class="card-body">
             <div class="card-badge">${escapeHTML(acc.badge)}</div>
@@ -746,7 +874,7 @@
 
             <div class="card-footer">
               <div class="card-price">$${escapeHTML(acc.price)} <span>/ USD</span></div>
-              <button class="btn btn-primary" onclick="buyAccount(${acc.id})">Переглянути акаунт <i class="fa-solid fa-arrow-right"></i></button>
+              <button class="btn btn-primary" onclick="buyAccount(${acc.id})"><i class="fa-solid fa-cart-plus"></i> До кошика</button>
             </div>
           </div>
         `;
@@ -837,7 +965,244 @@
     }
 
     function buyAccount(id) {
-      alert(`Ви обрали акаунт #${id}. Перехід до оформлення замовлення...`);
+      if (!accountsData.some(account => account.id === id)) return;
+      if (!cartAccountIds.includes(id)) {
+        cartAccountIds.push(id);
+        saveCart();
+        renderCart();
+      }
+      openCart();
+    }
+
+    function saveCart() {
+      try {
+        localStorage.setItem(cartStorageKey, JSON.stringify(cartAccountIds));
+      } catch (error) {
+        showCatalogMessage('Не вдалося зберегти кошик у цьому браузері.', true);
+      }
+    }
+
+    function renderCart() {
+      const cartItems = document.getElementById('cartItems');
+      const cartAccounts = cartAccountIds
+        .map(id => accountsData.find(account => account.id === id))
+        .filter(Boolean);
+      cartAccountIds = cartAccounts.map(account => account.id);
+      const total = cartAccounts.reduce((sum, account) => sum + account.price, 0);
+
+      document.getElementById('cartCount').textContent = cartAccounts.length;
+      document.getElementById('cartTotal').textContent = `$${total.toFixed(2)}`;
+      document.getElementById('checkoutButton').disabled = cartAccounts.length === 0;
+      cartItems.innerHTML = cartAccounts.length
+        ? cartAccounts.map(account => `
+          <article class="cart-item">
+            <div>
+              <strong>${escapeHTML(account.title)}</strong>
+              <span>${account.mmr} MMR · ${escapeHTML(account.badge)}</span>
+            </div>
+            <strong>$${Number(account.price).toFixed(2)}</strong>
+            <button class="cart-remove" type="button" onclick="removeFromCart(${account.id})" aria-label="Видалити ${escapeHTML(account.title)} з кошика">
+              <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
+            </button>
+          </article>
+        `).join('')
+        : '<p class="cart-empty">Кошик порожній. Додайте акаунт із каталогу.</p>';
+    }
+
+    function openCart() {
+      renderCart();
+      document.getElementById('cartDialog').showModal();
+    }
+
+    function closeCart() {
+      document.getElementById('cartDialog').close();
+    }
+
+    function removeFromCart(id) {
+      cartAccountIds = cartAccountIds.filter(accountId => accountId !== id);
+      saveCart();
+      renderCart();
+    }
+
+    function startCheckout() {
+      if (!cartAccountIds.length) return;
+      const cartAccounts = cartAccountIds
+        .map(id => accountsData.find(account => account.id === id))
+        .filter(Boolean);
+      const total = cartAccounts.reduce((sum, account) => sum + account.price, 0);
+      document.getElementById('checkoutItems').innerHTML = cartAccounts.map(account => `
+        <div class="checkout-order-item">
+          <span>${escapeHTML(account.title)} · ${account.mmr} MMR</span>
+          <strong>$${Number(account.price).toFixed(2)}</strong>
+        </div>
+      `).join('');
+      document.getElementById('checkoutTotal').textContent = `$${total.toFixed(2)}`;
+      document.getElementById('checkoutMessage').textContent = '';
+      closeCart();
+      document.getElementById('checkoutDialog').showModal();
+    }
+
+    function closeCheckout() {
+      document.getElementById('checkoutDialog').close();
+    }
+
+    function startCardPayment() {
+      document.getElementById('checkoutMessage').textContent = 'Для оплати підключіть платіжний сервіс і серверну перевірку статусу замовлення. Дані картки не вводьте на цій демо-сторінці.';
+    }
+
+    function sendOrderMessage(event) {
+      event.preventDefault();
+    }
+
+    function openAuth() {
+      if (!currentUser) setAuthMode('login');
+      updateAuthView();
+      document.getElementById('authDialog').showModal();
+    }
+
+    function closeAuth() {
+      document.getElementById('authDialog').close();
+    }
+
+    function setAuthMode(mode) {
+      currentAuthMode = mode;
+      const isRegister = mode === 'register';
+      document.getElementById('loginTab').classList.toggle('active', !isRegister);
+      document.getElementById('registerTab').classList.toggle('active', isRegister);
+      document.getElementById('loginTab').setAttribute('aria-selected', String(!isRegister));
+      document.getElementById('registerTab').setAttribute('aria-selected', String(isRegister));
+      document.getElementById('confirmPasswordField').hidden = !isRegister;
+      document.getElementById('authPasswordConfirm').required = isRegister;
+      document.getElementById('authPassword').autocomplete = isRegister ? 'new-password' : 'current-password';
+      document.getElementById('authSubmitButton').textContent = isRegister ? 'Створити акаунт' : 'Увійти';
+      document.getElementById('authMessage').textContent = '';
+    }
+
+    function updateAuthView() {
+      const isAuthenticated = Boolean(currentUser);
+      document.getElementById('authTabs').hidden = isAuthenticated;
+      document.getElementById('authForm').hidden = isAuthenticated;
+      document.getElementById('authProfile').hidden = !isAuthenticated;
+      document.getElementById('authDialogTitle').textContent = isAuthenticated ? 'Мій акаунт' : 'Увійти або створити акаунт';
+      document.getElementById('authProfileEmail').textContent = currentUser;
+      document.getElementById('authHeaderLabel').textContent = isAuthenticated ? 'Мій акаунт' : 'Увійти';
+      document.getElementById('authHeaderButton').title = isAuthenticated ? currentUser : 'Увійти або створити акаунт';
+    }
+
+    async function hashAuthPassword(password, salt) {
+      const passwordBytes = new TextEncoder().encode(password);
+      const saltBytes = salt
+        ? Uint8Array.from(atob(salt), character => character.charCodeAt(0))
+        : crypto.getRandomValues(new Uint8Array(16));
+      const keyMaterial = await crypto.subtle.importKey('raw', passwordBytes, 'PBKDF2', false, ['deriveBits']);
+      const passwordHash = await crypto.subtle.deriveBits({
+        name: 'PBKDF2',
+        salt: saltBytes,
+        iterations: 210000,
+        hash: 'SHA-256'
+      }, keyMaterial, 256);
+      return {
+        salt: btoa(String.fromCharCode(...saltBytes)),
+        hash: btoa(String.fromCharCode(...new Uint8Array(passwordHash)))
+      };
+    }
+
+    function readLocalUsers() {
+      const savedUsers = localStorage.getItem(localUsersStorageKey);
+      if (!savedUsers) return [];
+      const users = JSON.parse(savedUsers);
+      if (!Array.isArray(users) || !users.every(user =>
+        user && typeof user.email === 'string' && typeof user.salt === 'string' && typeof user.hash === 'string'
+      )) {
+        throw new Error('Локальні дані акаунта пошкоджені.');
+      }
+      return users;
+    }
+
+    async function submitAuth(event) {
+      event.preventDefault();
+      const form = event.currentTarget;
+      if (!form.reportValidity()) return;
+
+      const email = document.getElementById('authEmail').value.trim().toLowerCase();
+      const password = document.getElementById('authPassword').value;
+      const passwordConfirm = document.getElementById('authPasswordConfirm').value;
+      const message = document.getElementById('authMessage');
+      message.textContent = '';
+
+      if (!crypto.subtle) {
+        message.textContent = 'Для захищеної перевірки пароля відкрийте сайт через HTTPS або localhost.';
+        return;
+      }
+
+      try {
+        const users = readLocalUsers();
+        const existingUser = users.find(user => user.email === email);
+
+        if (currentAuthMode === 'register') {
+          if (password !== passwordConfirm) {
+            message.textContent = 'Паролі не збігаються.';
+            return;
+          }
+          if (existingUser) {
+            message.textContent = 'Акаунт із такою поштою вже існує. Увійдіть.';
+            return;
+          }
+          const credentials = await hashAuthPassword(password);
+          users.push({ email, ...credentials });
+          localStorage.setItem(localUsersStorageKey, JSON.stringify(users));
+        } else {
+          if (!existingUser) {
+            message.textContent = 'Акаунт не знайдено. Створіть новий.';
+            return;
+          }
+          const credentials = await hashAuthPassword(password, existingUser.salt);
+          if (credentials.hash !== existingUser.hash) {
+            message.textContent = 'Неправильна пошта або пароль.';
+            return;
+          }
+        }
+
+        currentUser = email;
+        sessionStorage.setItem(authSessionStorageKey, email);
+        form.reset();
+        updateAuthView();
+      } catch (error) {
+        message.textContent = `Не вдалося виконати дію: ${error.message}`;
+      }
+    }
+
+    function logout() {
+      currentUser = '';
+      sessionStorage.removeItem(authSessionStorageKey);
+      updateAuthView();
+      setAuthMode('login');
+      closeAuth();
+    }
+
+    function hasCookieConsent() {
+      const consentCookie = document.cookie.split('; ').some(cookie => cookie.startsWith(`${cookieConsentKey}=`));
+      try {
+        return consentCookie || localStorage.getItem(cookieConsentKey) === 'accepted';
+      } catch (error) {
+        return consentCookie;
+      }
+    }
+
+    function acceptCookies() {
+      document.cookie = `${cookieConsentKey}=accepted; max-age=31536000; path=/; SameSite=Lax`;
+      try {
+        localStorage.setItem(cookieConsentKey, 'accepted');
+      } catch (error) {
+        // Cookie consent remains available when browser storage is restricted.
+      }
+      document.getElementById('cookieBanner').hidden = true;
+    }
+
+    function showCookieBanner() {
+      if (!hasCookieConsent()) {
+        document.getElementById('cookieBanner').hidden = false;
+      }
     }
 
     function loadMore() {
@@ -848,9 +1213,29 @@
     document.addEventListener('DOMContentLoaded', () => {
       customAccounts = loadCustomAccounts();
       accountsData.push(...customAccounts);
+      try {
+        const savedCart = JSON.parse(localStorage.getItem(cartStorageKey) || '[]');
+        if (Array.isArray(savedCart)) {
+          cartAccountIds = savedCart.filter(id => Number.isInteger(id));
+        }
+      } catch (error) {
+        cartAccountIds = [];
+      }
       document.getElementById('accountForm').addEventListener('submit', addAccount);
+      try {
+        const savedSession = sessionStorage.getItem(authSessionStorageKey);
+        if (savedSession && readLocalUsers().some(user => user.email === savedSession)) {
+          currentUser = savedSession;
+        }
+      } catch (error) {
+        sessionStorage.removeItem(authSessionStorageKey);
+      }
+      updateAuthView();
       renderAccounts(accountsData);
+      renderCart();
+      showCookieBanner();
     });
   </script>
+  <script src="script.js" defer></script>
 </body>
 </html>
